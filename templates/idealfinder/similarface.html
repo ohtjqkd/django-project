@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+
+  <head>
+    <link rel="stylesheet" href="/static/idealfinder/css/similarface.css"/>
+  </head>
+
+  <body>
+    {% include 'idealfinder/header.html' %}
+    <h1 align="center">💖가장 닮은꼴 TOP 5💖</h1>
+    <div id="image_container">
+      <img id="upload_img" src="{% static 'idealfinder/img/photo/upload.jpg' %}"/>
+    </div>
+    <div class="input_img">
+      <input disabled="true" type="file" id="image" accept="image/*"/>
+    </div>
+    <div class="rank_photos1">
+      <div class="photos1">
+        {% for _ in range %}
+          <div>
+            <div class="viewBox1">
+              <div class="photo_img1">
+                <h3>{{forloop.counter}}위</h3>
+                <img id="imageTest" src="{% static 'idealfinder/img/photo/icon-suspect.svg' %}"/>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="tail">
+      <div class="first">
+        <a href="/">
+          <div class="startBT">
+            <div class="startBT_text">
+              <p>메인으로</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+    {% include 'idealfinder/script.html' %}
+    <script src="{% static 'idealfinder/js/similarity.js' %}"></script>
+    <script async="async" src="https://docs.opencv.org/master/opencv.js" onload="onLoadOpenCV()" type="text/javascript"></script>
+  </body>
+
+</html>

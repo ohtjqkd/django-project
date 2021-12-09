@@ -15,12 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.shortcuts import redirect
-from django.urls import path
-from django.urls.conf import include
+from django.urls import path, include
 from django.http.response import HttpResponseRedirect
 urlpatterns = [
+    path('', lambda x: HttpResponseRedirect('portfolio')),
     path('admin/', admin.site.urls),
-    path('', lambda x: HttpResponseRedirect('portfolio/')),
     path('portfolio/', include('portfolio.urls')),
     path('idealfinder/', include('idealfinder.urls')),
 ]

@@ -22,7 +22,6 @@ SECRET_PATH = os.path.join(BASE_DIR, '.config_secret')
 SECRET_PATH_FILE = os.path.join(SECRET_PATH, 'secret.json')
 
 # set config_secret
-print(json.loads(open(SECRET_PATH_FILE).read())['django']['base'])
 for key, value in json.loads(open(SECRET_PATH_FILE).read())['django']['base'].items():
     setattr(sys.modules[__name__], key, value)
 
@@ -31,7 +30,6 @@ for key, value in json.loads(open(SECRET_PATH_FILE).read())['django']['base'].it
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -46,6 +44,8 @@ INSTALLED_APPS = [
 ]
 INSTALLED_APPS += [
     'rest_framework',
+    'djangoportfolio',
+    'portfolio',
     'idealfinder',
 ]
 
@@ -136,3 +136,15 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser'
+    ]
+}
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10000000

@@ -1,28 +1,29 @@
 from django.http.response import JsonResponse
 from idealfinder.models import *
+from idealfinder.apps import IdealfinderConfig
 from django.shortcuts import redirect, render
 # from apps import IdealfinderConfig
-import os, random, json
-import idealfinder.modules as my_module
+import os, random, json, datetime, time
+from idealfinder.modules import get_response
 
-class Response:
-    def __init__(self, **kargs):
-        super.__init__()
-        for k, v in kargs:
+class Response(IdealfinderConfig):
+    def __init__(self, request, **kargs):
+        self.request = request
+        for k, v in kargs.items():
             setattr(self, k, v)
-    def render(self, request):
-        return render(request, os.path.join(self.template_path, self.template), context=self.__dict__)
+    def render(self):
+        return render(self.request, os.path.join(self.template_path, self.template), context=self.__dict__)
     def json_response(self):
-        return JsonResponse({'result': self.param.get('result'), 'render':self.render().content.decode('utf-8')})
+        return JsonResponse({'result': self.params.get('result'), 'render':self.render().content.decode('utf-8')})
 
 class ImageResponse(Response):
-    def __init__(self, **kargs):
-        super.__init__(kargs)
+    def __init__(self, request, **kargs):
+        super().__init__(request, **kargs)
         self.images_li = []
         self.images_dict = {}
         self.cluster_info_li = []
         self.cluster_info_dict = {}
-        self.get_images(gender=self.gender, choices = self.choices)
+        # self.get_images(gender=self.gender, choices = self.choices)
     
     def get_images(self, gender='', choices=''):
         stage_n_cluster = [6, 5, 5]
@@ -42,26 +43,55 @@ class ImageResponse(Response):
                 print(e)
     def post_images(self, gender='male', params=None):
         i = 0
-        for k, v in params['cluster_info'].items():
+        print(params)
+        for k, v in params.get('cluster_info', {}).items():
             self.cluster_info_dict[i] = {'image_info': ImageInfo.objects.get(id=v.get('sample')[0]), 'nearest': [ImageInfo.objects.get(id=id) for id in v.get('nearest')], 'data': v.get('ids').tolist()}
             i += 1
 
 class HomeResponse(ImageResponse):
-    def __init__(self, **kargs):
-        super.__init__(**kargs)
+    def __init__(self, request, **kargs):
+        super().__init__(request, **kargs)
+        self.gender = self.request.GET.get('gender', '')
+        self.template = 'index.html'
+        self.css = "index"
 
 class ProcessResponse(ImageResponse):
-    def __init__(self, **kargs):
-        super.__init__(**kargs)
-        self.post_images(gender='male', params=None)
-        query_set = ImageInfo.objects.filter(gender=self.gender)
-        embedding_info = EmbeddingInfo.objects.select_related().filter(images_id_id__gender = self.gender)
+    def __init__(self, request, **kargs):
+        super().__init__(request, **kargs)
+        self.gender = self.request.GET.get('gender', '')
+        self.css = 'process'
+    def get(self):
+        self.template = 'process.html'
         ids, embeddings = [], []
-        for embedding in embedding_info:
-            ids.append(embedding.image_id_id)
-            embeddings.append(json.loads(embedding_info))
-        kmeans_result = my_modules.get_response(ids=ids, embeddings=embeddings)
-        return ProcessResponse(request.GET)
-    def render(self):
-        if self.params.METHOD == 'GET':
-            return super
+        for embedding in EmbeddingInfo.objects.select_related().filter(image_id__gender = self.gender):
+            print(embedding)
+            ids.append(embedding.image_id)
+            embeddings.append(json.loads(embedding.embedding))
+        self.stage = 1
+        self.params = get_response(ids=ids, embeddings=embeddings)
+        self.js = 'idealfinder'
+        self.post_images(self.gender, self.params)
+        return self.render()
+
+    def post(self):
+        print(self.request.__dict__)
+        request_time = datetime.datetime.now()
+        body = json.loads(self.request.body)
+        self.stage = int(body.get('stage', 1))+1
+        curr_selected_sample, selected_ids, selected_embeddings = [], [], []
+        for k, v in body.get('selected').items():
+            try:
+                selected_ids.extend(list(map(int, v[1:-1].split(", "))))
+                curr_selected_sample.append((int(k), json.loads(EmbeddingInfo.objects.get(image_id = int(k)).embedding)))
+            except Exception as e:
+                print(e)
+        for id in selected_ids:
+            selected_embeddings.append(json.loads(EmbeddingInfo.objects.get(image_id=id).embedding))
+        self.params = get_response(ids=selected_ids, embeddings=selected_embeddings, stage=self.stage, choices=curr_selected_sample, gender=self.gender)
+        if self.params['result']:
+            self.template = 'result.html'
+        else:
+            self.template = 'process_response.html'
+        self.post_images(self.gender, self.params)
+        time.sleep(max(0, 2-(datetime.datetime.now()-request_time).seconds))
+        return self.json_response()

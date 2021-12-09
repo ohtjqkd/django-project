@@ -1,0 +1,52 @@
+{% load static %}
+<div class="result_box">
+  <h1>💖최종 이상형 TOP 5💖</h1>
+</div>
+<div class="rank_photos">
+  <div class="photos">
+    {%with cluster_info_dict.0.nearest as n%}
+    {%for img in n%}
+      {%if forloop.counter < 6%}
+        <div class="rank_1 rankBoxMK moveview">
+          <div class="viewBox">
+            <div class="photo_img">
+              <img id="imageTest" src="{% static 'idealfinder/img/' %}{{gender}}/{{img.get_file_name}}"/>
+            </div>
+            <div class="name">{{img.name}}</div>
+          </div>
+        </div>
+        {%endif%}
+      {% endfor %}
+      {% endwith %}
+    </div>
+  </div>
+  <div class="result_tail">
+    <div class="first">
+      <a href="./">
+        <div class="rankBT">
+          <div class="rankBT_text">
+            <p>메인으로
+            </p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="second">
+      <a href="">
+        <div class="rankBT">
+          <div class="rankBT_text">
+            <p>다시 시작</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="third">
+      <a href="./similarity?id={{cluster_info_dict.0.image_info.id}}">
+        <div class="rankBT">
+          <div class="rankBT_text">
+            <p>My Some</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>

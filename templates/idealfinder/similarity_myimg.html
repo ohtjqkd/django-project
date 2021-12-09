@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <link
+      rel="stylesheet"
+      href="/static/idealfinder/css/similarity_myimg.css"
+    />
+  </head>
+  <body>
+    <header>
+      {% include 'idealfinder/header.html' %}
+    </header>
+    <div class="line">
+      <div class="lineBr">
+        <p style="color: white">line</p>
+      </div>
+    </div>
+    <div class="container-wrapper">
+      {% csrf_token %}
+      <div id="image_container">
+        <img id="imageTest" src="{% static 'idealfinder/img/'%}{{image_info.gender}}/{{image_info.get_file_name}}" />
+        <img id="upload_img" src="/static/idealfinder/img/photo/upload.jpg" />
+      </div>
+      <div class="input_img">
+        <input disabled="true" type="file" id="image" accept="image/*" />
+      </div>
+      <div class="score">
+        <div class="str_txt">이상형과의 유사도 점수는 &nbsp;</div>
+        <div class="score_txt"><span class="score-int">??</span>점&nbsp;</div>
+        <div class="str_txt">입니다.</div>
+      </div>
+      <div class="tail">
+        <div class="first">
+          <a href="/">
+            <div class="startBT">
+              <div class="startBT_text">
+                <p>메인으로</p>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <script src="{% static 'idealfinder/js/similarity.js' %}"></script>
+    {% include 'idealfinder/script.html' %}
+    <script
+      async
+      src="https://docs.opencv.org/master/opencv.js"
+      type="text/javascript"
+      onload="onLoadOpenCV()"
+    ></script>
+
+  </body>
+</html>

@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+
+  <head>
+    {% include 'idealfinder/head.html' %}
+  </head>
+
+  <body>
+    {% include 'idealfinder/header.html' %}
+    <div class="header">
+      <div class="header_title">
+        <p>Ideal Finder</p>
+      </div>
+    </div>
+    <div class="container-wrapper">
+      <article class="container">
+        <div class="main_photos">
+          <div class="main_view_1 main_moveview">
+            <div class="main_viewBox">
+              <div class="main_photo_img">
+                <img id="pic" src="{% static 'idealfinder/img/photo/first_pic.jpg' %}">
+              </div>
+            </div>
+          </div>
+          <div class="main_view_2 main_moveview">
+            <div class="main_viewBox">
+              <div class="main_photo_img">
+                <img id="pic" src="{% static 'idealfinder/img/photo/second_pic.jpg' %}">
+              </div>
+            </div>
+          </div>
+          <div class="main_view_3 main_moveview">
+            <div class="main_viewBox">
+              <div class="main_photo_img">
+                <img id="pic" src="{% static 'idealfinder/img/photo/third_pic.jpg' %}">
+              </div>
+            </div>
+          </div>
+          <div class="shadow_main main_moveview"></div>
+        </div>
+        <div class="tail">
+          <div class="first">
+            <a href="process?gender=female">
+              <div class="startBT">
+                <div class="startBT_text">
+                  <p>여성 찾기</p>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="second">
+            <a href="process?gender=male">
+              <div class="startBT">
+                <div class="startBT_text">
+                  <p>남성 찾기</p>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="third">
+                  <a href="./similarface">
+            <div class="startBT">
+              <div class="startBT_text">
+                <p>닮은꼴 찾기
+                </p>
+              </div>
+            </div>
+                  </a>
+          </div>
+        </div>
+      </article>
+    </div>
+    {% include 'idealfinder/script.html' %}
+  </body>
+
+</html>
