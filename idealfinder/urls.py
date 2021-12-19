@@ -21,6 +21,6 @@ urlpatterns = [
     path('', views.AppHome.as_view()),
     path('process', views.Process.as_view()),
     path('similarity', views.Similarity.as_view()),
-    path('similarface', views.Neighbor.as_view()),
+    path('lookalike', views.Lookalike.as_view()),
     path('initdb', views.InitDB.as_view()),
 ]

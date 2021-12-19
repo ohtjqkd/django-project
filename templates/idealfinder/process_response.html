@@ -1,5 +1,5 @@
 {% load static %}
-{% csrf_token %}
+{% comment %} {% csrf_token %} {% endcomment %}
 <div class="header">
   <div class="progress_bar">
     {% if cluster_info_dict.items|length == 8 %}

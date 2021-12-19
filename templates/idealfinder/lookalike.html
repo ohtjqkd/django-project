@@ -3,7 +3,7 @@
 <html lang="ko">
 
   <head>
-    <link rel="stylesheet" href="/static/idealfinder/css/similarface.css"/>
+    {% include 'idealfinder/head.html' %}
   </head>
 
   <body>
@@ -31,7 +31,7 @@
     </div>
     <div class="tail">
       <div class="first">
-        <a href="/">
+        <a href="./">
           <div class="startBT">
             <div class="startBT_text">
               <p>메인으로</p>
@@ -41,7 +41,6 @@
       </div>
     </div>
     {% include 'idealfinder/script.html' %}
-    <script src="{% static 'idealfinder/js/similarity.js' %}"></script>
     <script async="async" src="https://docs.opencv.org/master/opencv.js" onload="onLoadOpenCV()" type="text/javascript"></script>
   </body>
 

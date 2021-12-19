@@ -147,4 +147,6 @@ REST_FRAMEWORK = {
     ]
 }
 
+ALLOWED_HOSTS = ['june.zapto.org']
+
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10000000

@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>June's Portfolio</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'portfolio/css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'portfolio/css/index.css' %}" />
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
 </head>
 <body>
@@ -50,12 +51,13 @@
         </h1>
         <div class="skill-wrapper">
         {% for set in skill_set %}
-            <div class="domain">
+            <div class="domain round">
                 <h2 class="domain_name">
                     {{set.domain}}
                 </h2>
                 {% for skill in set.skills %}
-                    <i class='{{skill.ico.class}}'></i>
+                    {{skill|safe}}
+                    {% comment %} <i class='{{skill.ico.class}}'></i> {% endcomment %}
                 {% endfor %}
             </div>
         {% endfor %}
@@ -66,14 +68,21 @@
             Projects
         </h1>
         {% for project in projects %}
-            <article class="project">
+            <article class="project round">
                 <h2>
                 {{project.name}}
                 </h2>
                 <section class="projects image-field">
-                    {% for image_src in project.images %}
-                        <img src="{% static 'portfolio/img'%}/{{image_src}}"/>
-                    {% endfor %}
+                    <div class="swiper">
+                        <div class="swiper-wrapper">
+                            {% for image_src in project.images %}
+                                <div class="swiper-slide">
+                                    <img src="{% static 'portfolio/img'%}/{{image_src}}"/>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="swiper-pagination"></div>
+                    </div>
                 </section>
                 <section class="projects desc-field">
                     {% for desc in project.description %}
@@ -99,6 +108,11 @@
     <section id="experiences">
         
     </section>
+    <a href="https://icons8.com/icon/qULYrKvr-AFH/django">Django icon by Icons8</a>
+    <a href="https://icons8.com/icon/t2x6DtCn5Zzx/nginx">Nginx icon by Icons8</a>
+    <a href="https://icons8.com/icon/11625/mysql">MySQL icon by Icons8</a>
+    <a href="https://icons8.com/icon/bpip0gGiBLT1/opencv">OpenCV icon by Icons8</a>
+    <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js" ></script>
     <script src="{% static 'portfolio/js/portfolio.js' %}"></script>
 </body>
 </html>

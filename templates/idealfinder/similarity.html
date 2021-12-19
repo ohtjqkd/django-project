@@ -2,10 +2,7 @@
 <!DOCTYPE html>
 <html lang="ko">
   <head>
-    <link
-      rel="stylesheet"
-      href="/static/idealfinder/css/similarity_myimg.css"
-    />
+    {% include 'idealfinder/head.html' %}
   </head>
   <body>
     <header>
@@ -32,7 +29,7 @@
       </div>
       <div class="tail">
         <div class="first">
-          <a href="/">
+          <a href="./">
             <div class="startBT">
               <div class="startBT_text">
                 <p>메인으로</p>
@@ -43,7 +40,6 @@
       </div>
     </div>
 
-    <script src="{% static 'idealfinder/js/similarity.js' %}"></script>
     {% include 'idealfinder/script.html' %}
     <script
       async

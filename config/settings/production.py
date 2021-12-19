@@ -6,4 +6,4 @@ for key, value in json.loads(open(SECRET_PATH_FILE).read())['django']['productio
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS += ['*']

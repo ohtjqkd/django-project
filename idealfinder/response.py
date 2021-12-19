@@ -1,17 +1,22 @@
 from django.http.response import JsonResponse
 from idealfinder.models import *
-from idealfinder.apps import IdealfinderConfig
+from idealfinder.apps import *
 from django.shortcuts import redirect, render
 # from apps import IdealfinderConfig
 import os, random, json, datetime, time
-from idealfinder.modules import get_response
+from idealfinder.modules import get_response, get_embedding_diff, get_similar_face
 
-class Response(IdealfinderConfig):
-    def __init__(self, request, **kargs):
+class Response:
+    def __init__(self, request, **kwargs):
         self.request = request
-        for k, v in kargs.items():
+        self.template_path = "idealfinder"
+        self.app = "idealfinder"
+        self.css_list = ['common.css']
+        self.js_list = ['util.js']
+        for k, v in kwargs.items():
             setattr(self, k, v)
     def render(self):
+        print(self.template_path)
         return render(self.request, os.path.join(self.template_path, self.template), context=self.__dict__)
     def json_response(self):
         return JsonResponse({'result': self.params.get('result'), 'render':self.render().content.decode('utf-8')})
@@ -51,15 +56,19 @@ class ImageResponse(Response):
 class HomeResponse(ImageResponse):
     def __init__(self, request, **kargs):
         super().__init__(request, **kargs)
-        self.gender = self.request.GET.get('gender', '')
         self.template = 'index.html'
-        self.css = "index"
+        self.css_list.append('index.css')
+        self.js_list.append('index.js')
+        self.gender = self.request.GET.get('gender', '')
 
 class ProcessResponse(ImageResponse):
     def __init__(self, request, **kargs):
         super().__init__(request, **kargs)
+        self.template = 'process.html'
+        self.css_list.append('process.css')
+        self.js_list.append('process.js')
         self.gender = self.request.GET.get('gender', '')
-        self.css = 'process'
+
     def get(self):
         self.template = 'process.html'
         ids, embeddings = [], []
@@ -69,14 +78,12 @@ class ProcessResponse(ImageResponse):
             embeddings.append(json.loads(embedding.embedding))
         self.stage = 1
         self.params = get_response(ids=ids, embeddings=embeddings)
-        self.js = 'idealfinder'
         self.post_images(self.gender, self.params)
         return self.render()
 
     def post(self):
-        print(self.request.__dict__)
         request_time = datetime.datetime.now()
-        body = json.loads(self.request.body)
+        body = self.request.data
         self.stage = int(body.get('stage', 1))+1
         curr_selected_sample, selected_ids, selected_embeddings = [], [], []
         for k, v in body.get('selected').items():
@@ -94,4 +101,49 @@ class ProcessResponse(ImageResponse):
             self.template = 'process_response.html'
         self.post_images(self.gender, self.params)
         time.sleep(max(0, 2-(datetime.datetime.now()-request_time).seconds))
+        return self.json_response()
+
+class SimilarityResponse(Response):
+    def __init__(self, request, **kwargs):
+        super().__init__(request, **kwargs)
+        self.template = 'similarity.html'
+        self.css_list.append('similarity.css')
+        self.js_list.append('similarity.js')
+
+    def get(self):
+        self.image_info = ImageInfo.objects.get(id=self.request.GET.get('id'))
+        return self.render()
+    
+    def post(self):
+        self.image_id = self.request._request.GET.get('id')
+        body = self.request.data
+        user_img = list(map(int, body.get('user_img').split(',')))
+        width, height = body.get('width'), body.get('height')
+        self.selector = 'span.score-int'
+        self.attr = 'innerText'
+        msg = 'success'
+        try:
+            self.value = get_embedding_diff(user_img, width, height, self.image_id)
+        except Exception as e:
+            self.msg = e
+            self.value = '??'
+        return self.json_response()
+
+class LookalikeResponse(Response):
+    def __init__(self, request, **kwargs):
+        super().__init__(request, **kwargs)
+        self.template = 'lookalike.html'
+        self.css_list.append('lookalike.css')
+        self.js_list.append('lookalike.js')
+
+    def get(self):
+        self.range = range(5)
+        return self.render()
+    
+    def post(self):
+        body = self.request.data
+        user_img = list(map(int, body.get('user_img').split(',')))
+        width, height = body.get('width'), body.get('height')
+        self.value = get_similar_face(user_img, width, height)
+        self.selector, self.attr = "imag#imageTest", "src"
         return self.json_response()

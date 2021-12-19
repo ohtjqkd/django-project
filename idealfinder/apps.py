@@ -6,12 +6,3 @@ class IdealfinderConfig(AppConfig):
     name = 'idealfinder'
     template_path = 'idealfinder/'
     static_path = 'idealfinder/'
-
-class HomeConfig(IdealfinderConfig):
-    template = 'index.html'
-    css = 'index.css'
-    api='/'
-
-class ProcessReponse(IdealfinderConfig):
-    tempalte = 'process_response.html'
-    

@@ -10,7 +10,7 @@ from .models import ImageInfo
 from .modules import get_embedding_diff, get_similar_face
 from idealfinder.my_model.main import init_db
 
-from .response import HomeResponse, ProcessResponse
+from .response import HomeResponse, LookalikeResponse, ProcessResponse, SimilarityResponse
 # Create your views here.
 class AppHome(APIView):
     def get(self, request):
@@ -25,38 +25,17 @@ class Process(APIView):
 
 class Similarity(APIView):
     def get(self, request):
-        sim_response = {}
-        sim_response['image_info'] = ImageInfo.objects.get(id=request.GET.get('id'))
-        print(sim_response)
-        return render(request, 'idealfinder/similarity_myimg.html', context=sim_response)
+        return SimilarityResponse(request).get()
+
     def post(self, request):
-        image_id = request._request.GET.get("id")
-        json_body = json.loads(request.body)
-        user_img = list(map(int, json_body.get('user_img').split(",")))
-        width = json_body.get('width')
-        height = json_body.get('height')
-        status_code = 200
-        try:
-            score = get_embedding_diff(user_img, width, height, image_id)
-        except Exception as e:
-            print(e)
-            score = '??'
-            status_code = 400
+        return SimilarityResponse(request).post()
 
-        return JsonResponse(data={"selector":"span.score-int", "attr": "innerText", "values": [score]})
-
-class Neighbor(APIView):
+class Lookalike(APIView):
     def get(self, request):
-        nei_response = {'range':range(5)}
-        return render(request, 'idealfinder/similarface.html', context=nei_response)
+        return LookalikeResponse(request).get()
+        
     def post(self, request):
-        json_body = json.loads(request.body)
-        user_img = list(map(int, json_body.get('user_img').split(",")))
-        width = json_body.get('width')
-        height = json_body.get('height')
-        image_info = get_similar_face(user_img, width, height)
-        print(image_info)
-        return JsonResponse(data={"selector":"img#imageTest", "attr": "src", "values": image_info})
+        return LookalikeResponse(request).post()
 
 class InitDB(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
