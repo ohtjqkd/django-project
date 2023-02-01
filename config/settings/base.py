@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-import os, json, sys
+import os, json, sys, datetime
 import pymysql
 pymysql.install_as_MySQLdb()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,13 +43,29 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 INSTALLED_APPS += [
+    'django.contrib.sites',
+
+    'rest_auth',
+    'rest_auth.registration',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+
     'rest_framework',
+    'rest_framework.authtoken',
+    'corsheaders',
+
+    # Apps
     'djangoportfolio',
     'portfolio',
     'idealfinder',
+    'user',
 ]
 
+# CorsMiddleware 추가 이 미들웨어는 최상단에 위치
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -139,8 +155,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser'
@@ -150,3 +171,57 @@ REST_FRAMEWORK = {
 ALLOWED_HOSTS = ['june.zapto.org']
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10000000
+
+# CORS setup
+
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:8080',
+    'http://192.168.0.5:8080',
+    'http://127.0.0.1:8080',
+)
+
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+)
+
+CORS_ALLOW_HEADERS = (
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'access-control-request-method',
+    'access-control-request-headers',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+)
+
+AUTH_USER_MODEL = 'user.CustomUser'
+
+SITE_ID = 1
+
+JWT_AUTH = {
+    'JWT_VERIFY': True,
+
+    'JWT_VERIFY_EXPIRATION': True,
+
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=1),
+
+    'JWT_ALLOW_REFRESH': True,
+
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',
+
+}
+
+REST_USE_JWT = True
+
+# APPEND_SLASH = False

@@ -1,26 +1,49 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div id="app">
+        <div id="header">
+            <Header />
+        </div>
+        <div id="container" class="content">
+            <router-view></router-view>
+        </div>
+        <div id="footer">
+            <Footer />
+        </div>
+    </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Header from "@/components/layout/Header.vue"
+import Footer from "@/components/layout/Footer.vue"
+
+// import axios from "axios"
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+    data: function() {
+        return {
+            userList: [],
+        };
+    },
+    components: {
+        Header,
+        Footer,
+    },
+    // mounted() { // DOM 객체가 생성된 후 DRF server에서 데이터를 가져와 저장
+    //     axios({
+    //         method: "GET",
+    //         url: url,
+    //     }).then((result) => {
+    //         this.userList = result.data; 
+    //     }).catch((err) => {
+    //         console.log("Failed", err);
+    //     });
+    // },
+    methods: { // CRUD 로직
+        getUserList: function() {},
+        updateUserList: function() {},
+        deleteUserList: function() {},
+    }
+};
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+<style></style>

@@ -1,4 +1,23 @@
-import { createApp } from 'vue'
+import Vue from 'vue'
 import App from './App.vue'
+import vuetify from './plugins/vuetify'
+import store from './store/store'
+import router from './router'
+import axios from 'axios'
+import { BootstrapVue, IconsPlugin, NavbarPlugin } from 'bootstrap-vue'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+Vue.config.productionTip = false
 
-createApp(App).mount('#app')
+Vue.use(router)
+Vue.use(BootstrapVue)
+Vue.use(IconsPlugin)
+Vue.use(NavbarPlugin)
+Vue.prototype.$axios = axios;
+
+new Vue({
+  vuetify,
+  store,
+  router,
+  render: h => h(App)
+}).$mount('#app')

@@ -12,6 +12,9 @@ from idealfinder.my_model.main import init_db
 
 from .response import HomeResponse, LookalikeResponse, ProcessResponse, SimilarityResponse
 # Create your views here.
+
+
+
 class AppHome(APIView):
     def get(self, request):
         return HomeResponse(request).render()
